@@ -1,0 +1,37 @@
+---
+title: "Cashflow Simulation"
+author: "EFS Alvarenga"
+date: "02/07/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ingest data
+
+```{r ingest}
+data_raw <- read.csv('~/Google Drive/Ninho/Financeiro/cashflow_history.csv')
+```
+
+## Set parameters
+
+```{r param}
+runs <- 10000
+adjs <- 1
+no.mon.double.weight <- 12
+```
+
+## Integrate data
+
+```{r}
+data_raw$Month <- as.Date(data_raw$Month)
+data_raw$Net   <- data_raw$In - data_raw$Out - data_raw$Housing
+```
+
+## Analyise history
+```{r}
+
+```
+
