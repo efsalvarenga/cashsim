@@ -71,6 +71,7 @@ dataplot %>%
   ggtitle(paste('Cashflow histograms from the last',nMonRpt,'months'))
   
 ```
+## Simulate cashflow
 
 ```{r sim}
 densinet  <- density(c(mydata[mydata$Month %in% tail(mydata$Month, nMonRpt),]$Net,mydata$Net))
