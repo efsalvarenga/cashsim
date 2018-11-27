@@ -26,6 +26,7 @@ mydata <- dataRaw %>%
   mutate(Month = as.Date(Month),
          Net   = In - Out - Housing)
 
+simParam
 simRuns <- simParam$Value[simParam$Param == 'SimulationRuns']
 densAdj <- simParam$Value[simParam$Param == 'DensityAdjust']
 nMonRpt <- simParam$Value[simParam$Param == 'NumberLastMonthsRepeat']
@@ -71,6 +72,7 @@ dataplot %>%
   ggtitle(paste('Cashflow histograms from the last',nMonRpt,'months'))
   
 ```
+
 ## Simulate cashflow
 
 ```{r sim}
