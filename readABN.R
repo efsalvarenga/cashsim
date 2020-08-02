@@ -11,9 +11,20 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-getCustomSum <- function(data, summaryGroups, generateDate = FALSE){
-  browser()
-}
+getCustomSum <- function(data, summaryGroups, generateDate = FALSE) {
+    result <- data %>%
+      group_by_at(summaryGroups) %>%
+      summarise(cashIn = sum(cashIn),
+                cashOut = sum(cashOut)) %>%
+      ungroup() %>%
+      mutate(delta = cashIn + cashOut)
+    
+    if (generateDate) {
+      result$date <- as.Date(paste(result$year, result$month, '01', sep = '-'))
+    }
+    
+    return(result)
+  }
 
 # read abn tabular data
 readRaw <- read.delim2('~/Google Drive/Ninho/Financeiro/abnExports/TXT200802124803.TAB',
@@ -42,38 +53,19 @@ readMunged %>%
   ggplot(aes(x = date, y = after)) +
   geom_line()
 
-# some monthly analysis
-monthly <- readMunged %>%
-  group_by(year, month, label) %>%
-  summarise(cashIn = sum(cashIn),
-            cashOut = sum(cashOut)) %>%
-  ungroup() %>%
-  mutate(date = paste(year, month, '01', sep = '-'),
-         delta = cashIn + cashOut)
-
-yearlabel <- monthly %>%
-  group_by(year, label) %>%
-  summarise(cashIn = sum(cashIn),
-            cashOut = sum(cashOut)) %>%
-  ungroup() %>%
-  mutate(delta = cashIn + cashOut)
-
-yearly <- yearlabel %>%
-  group_by(year) %>%
-  summarise(cashIn = sum(cashIn),
-            cashOut = sum(cashOut)) %>%
-  ungroup() %>%
-  mutate(delta = cashIn + cashOut)
-
-labelly <- yearlabel %>%
-  group_by(label) %>%
-  summarise(cashIn = sum(cashIn),
-            cashOut = sum(cashOut)) %>%
-  ungroup() %>%
-  mutate(delta = cashIn + cashOut)
-
-
-monthly %>%
-  filter(label != 'transit') %>%
+# some summarised analysis
+sumMonth <- getCustomSum(data = readMunged,
+                         summaryGroups = c('year', 'month', 'label'),
+                         generateDate = TRUE)
+sumMonth %>%
+  # filter(label != 'transit') %>%
   ggplot(aes(x = date, y = delta)) +
   geom_point()
+
+sumYear <- getCustomSum(data = readMunged,
+                        summaryGroups = c('year'),
+                        generateDate = FALSE)
+
+sumLabel <- getCustomSum(data = readMunged,
+                         summaryGroups = c('label'),
+                         generateDate = FALSE)
